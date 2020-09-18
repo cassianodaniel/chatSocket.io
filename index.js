@@ -1,10 +1,17 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import App from "./App";
+var app = require("express")();
+var http = require("http").createServer(app);
+var io = require("socket.io")(http);
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById("root")
-);
+app.get("/socket", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+});
+
+io.on("connection", (socket) => {
+  socket.on("chat message", (msg) => {
+    io.emit("chat message", msg);
+  });
+});
+
+http.listen(3000, () => {
+  console.log("localhost:3000");
+});
